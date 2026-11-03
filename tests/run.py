@@ -17,7 +17,7 @@ for adapter,machine,options in [('vesa','svga_s3',''),('tseng','svga_et4000',' t
  commands=['DISPLAY'+options,'addkey p1200 enter','SHOWCASE'+(' /TSENG' if adapter=='tseng' else '')+' /START 32 /ONCE > ONCE.TXT','if errorlevel 1 echo FAIL>BAD.TXT','echo RETURNED>DONE.TXT','SHOWCASE /START 0 > INVALID.TXT','exit']
  config=d/'test.conf';config.write_text(f'[sdl]\noutput=surface\n[dosbox]\nmachine={machine}\n[cpu]\ncore=normal\ncputype=386\nfpu=false\ncycles=fixed 24000\n[mixer]\nnosound=true\n[autoexec]\nmount c {d}\nc:\n'+'\n'.join(commands)+'\n')
  subprocess.run([box,'-conf',str(config),'-noconsole'],env=dict(os.environ,SDL_VIDEODRIVER='dummy',SDL_AUDIODRIVER='dummy'),stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=120,check=True)
- assert (d/'PASS.TXT').exists(),(d/'DISPLAY.LOG').read_text();assert (d/'DONE.TXT').exists() and not (d/'BAD.TXT').exists()
+ assert (d/'PASS.TXT').exists(),(d/'DISPLAY.LOG').read_text();assert (d/'DONE.TXT').exists() and not (d/'BAD.TXT').read_text().strip()
  assert not (d/'ONCE.TXT').read_text().strip(),(d/'ONCE.TXT').read_text()
  print(adapter,':',(d/'PASS.TXT').read_text().strip())
 print('PASS release ZIP, all 32 original GIF hashes, VESA and ET4000 framebuffer readback, CLI exit and text mode')
